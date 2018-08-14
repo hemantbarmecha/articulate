@@ -23,7 +23,7 @@ public class ArticulateApplicationTest extends SpringBootArticulateTests{
 
 	@Test
 	public void test() throws Exception  {
-		//mockMvc.perform(get("/bluegreen-check")).andExpect(status().isOk());
+		mockMvc.perform(get("/bluegreen-check")).andExpect(status().isOk());
 	}
 
 }
