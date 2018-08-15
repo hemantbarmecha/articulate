@@ -17,10 +17,26 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<pmd.version>6.0.1</pmd.version>
+		<pmd.plugin.version>3.10.0</pmd.plugin.version>
+		<checkstyle.version>3.0.0</checkstyle.version>
 		<java.version>1.8</java.version>
+		 <pmd.build-tools.version>1.2</pmd.build-tools.version>
 	</properties>
 
 	<dependencies>
+	<dependency>
+            <groupId>net.sourceforge.pmd</groupId>
+            <artifactId>pmd-core</artifactId>
+            <version>${pmd.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.sourceforge.pmd</groupId>
+            <artifactId>pmd-java</artifactId>
+            <version>${pmd.version}</version>
+            <scope>compile</scope>
+        </dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
@@ -57,16 +73,14 @@
 			<artifactId>jquery</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.12</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>org.webjars</groupId>
 			<artifactId>bootstrap</artifactId>
 		</dependency>
-
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.16.6</version>
+		</dependency>
 		<dependency>
 			<groupId>org.webjars</groupId>
 			<artifactId>morrisjs</artifactId>
@@ -78,12 +92,6 @@
 			<artifactId>raphaeljs</artifactId>
 			<version>2.1.4</version>
 		</dependency>
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<version>1.16.6</version>
-		</dependency>
-
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
@@ -113,7 +121,70 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-pmd-plugin</artifactId>
+                    <version>${pmd.plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>cpd</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <linkXRef>false</linkXRef>
+                        <minimumTokens>100</minimumTokens>
+                        <targetJdk>${java.version}</targetJdk>
+                        <rulesets>
+                            <ruleset>/net/sourceforge/pmd/pmd-dogfood-config.xml</ruleset>
+                        </rulesets>
+                        <excludeRoots>
+                            <excludeRoot>target/generated-sources/javacc</excludeRoot>
+                            <excludeRoot>target/generated-sources/antlr4</excludeRoot>
+                        </excludeRoots>
+                        <skipPmdError>true</skipPmdError>
+                        <failurePriority>2</failurePriority>
+                        <!--  <failOnViolation>true</failOnViolation>-->
+                        <printFailingErrors>true</printFailingErrors>
+                    </configuration>
+                    <dependencies>
+                        <!-- Note: we can't use a property for the version here due to https://issues.apache.org/jira/browse/MRELEASE-932 -->
+                        <dependency>
+                            <groupId>net.sourceforge.pmd</groupId>
+                            <artifactId>pmd-core</artifactId>
+                            <version>6.5.0</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>net.sourceforge.pmd</groupId>
+                            <artifactId>pmd-java</artifactId>
+                            <version>6.5.0</version>
+                        </dependency>
+                        <!-- This contains the dogfood ruleset -->
+                        <dependency>
+                            <groupId>net.sourceforge.pmd</groupId>
+                            <artifactId>pmd-build-tools-config</artifactId>
+                            <version>${pmd.build-tools.version}</version>
+                        </dependency>
+                    </dependencies>
+			</plugin>
 		</plugins>
 	</build>
+<reporting>
+  <plugins>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-pmd-plugin</artifactId>
+      <version>3.4</version>
+    </plugin>
+    <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jxr-plugin</artifactId>
+            <version>2.3</version>
+        </plugin>
+  </plugins>
+</reporting>
 
 </project>
